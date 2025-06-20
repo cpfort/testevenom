@@ -455,7 +455,7 @@ app.put('/api/agendamentos/ocultar/:id', autenticar, async (req, res) => {
 
 
 //=== venam post
-app.post('/api/enviar-venom', async (req, res) => {
+app.post('/api/enviar-venom', autenticar, async (req, res) => {
   const { numero, mensagem } = req.body;
   try {
     const resultado = await enviarViaVenom(numero, mensagem);
@@ -468,6 +468,7 @@ app.post('/api/enviar-venom', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 

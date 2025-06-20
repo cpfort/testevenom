@@ -1,36 +1,36 @@
 const venom = require('venom-bot');
 
-let client;
+let clientVenom = null;
 
 async function iniciarVenom() {
-  if (!client) {
-    client = await venom.create(
-      'connectcomercenaooficial-teste',
-      (base64Qr, asciiQR) => {
-        console.log('Escaneie o QR Code abaixo para autenticar o Venom Bot:');
-        console.log(asciiQR);
-      },
-      (statusSession, session) => {
-        console.log('Status da sessão Venom:', statusSession);
-      },
-      {
-        logQR: false,
-        browserArgs: ['--no-sandbox', '--disable-setuid-sandbox']
-      }
-    );
+  try {
+    const client = await venom.create({
+      session: 'connectcomerce',
+      multidevice: true
+    });
+
+    clientVenom = client;
+    console.log('✅ Venom conectado!');
+  } catch (err) {
+    console.error('❌ Erro ao iniciar o Venom:', err);
+    throw err;
   }
-  return client;
 }
 
 async function enviarViaVenom(numero, mensagem) {
-  if (!client) throw new Error('Venom client não iniciado.');
-  const numFormatado = numero.replace(/\D/g, '');
+  if (!clientVenom) {
+    return { sucesso: false, erro: 'Venom não está conectado' };
+  }
+
   try {
-    await client.sendText(numFormatado, mensagem);
+    await clientVenom.sendText(numero, mensagem);
     return { sucesso: true };
-  } catch (error) {
-    return { sucesso: false, erro: error.message };
+  } catch (erro) {
+    return { sucesso: false, erro };
   }
 }
 
-module.exports = { iniciarVenom, enviarViaVenom };
+module.exports = {
+  iniciarVenom,
+  enviarViaVenom
+};
