@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const { iniciarVenom, enviarViaVenom } = require('./venomService');
 const helmet = require('helmet');
 const csurf = require('csurf');
 const crypto = require('crypto');
@@ -17,6 +18,8 @@ const ExcelJS = require('exceljs');
 const leadsRoutes = require('./routes/leadsRoutes');
 const estoqueRoutes = require('./routes/estoqueRoutes');
 const multer = require('multer');
+
+
 
 
 
@@ -45,18 +48,20 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+
 app.use(session({
-  store: new pgSession({ pool, tableName: 'session' }),
-  secret: process.env.SESSION_SECRET,
+  secret: 'testeVenomSecret',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 1000 * 60 * 60 * 12 // 12 horas
-  }
+  secure: process.env.NODE_ENV === 'production', // só true em produção com HTTPS
+  httpOnly: true,
+  sameSite: 'strict',
+  maxAge: 1000 * 60 * 60 * 12
+} // para testes locais HTTP
 }));
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 10, // Limita a 10 tentativas por IP
@@ -441,6 +446,20 @@ app.put('/api/agendamentos/ocultar/:id', autenticar, async (req, res) => {
 
 
 
+//=== venam post
+app.post('/api/enviar-venom', async (req, res) => {
+  const { numero, mensagem } = req.body;
+  try {
+    const resultado = await enviarViaVenom(numero, mensagem);
+    if (resultado.sucesso) {
+      res.json({ success: true, message: 'Mensagem enviada via Venom!' });
+    } else {
+      res.status(500).json({ success: false, error: resultado.erro });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 
 
@@ -558,6 +577,10 @@ app.post('/api/disparo-massivo', autenticar, async (req, res) => {
   }
 });
 
+//==
+iniciarVenom()
+  .then(() => console.log('✅ Venom Bot iniciado com sucesso!'))
+  .catch(err => console.error('❌ Erro ao iniciar Venom Bot:', err));
 
 
 
