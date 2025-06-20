@@ -137,7 +137,7 @@ app.post('/login',loginLimiter, async (req, res) => {
     res.json({ success: true, redirect: '/home' }); // redireciona para /home
   } catch (err) {
     console.error('Erro no login:', err);
-    res.status(500).send('Erro interno');
+    res.status(500).json('Erro interno');
   }
 });
 
