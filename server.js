@@ -18,6 +18,7 @@ const ExcelJS = require('exceljs');
 const leadsRoutes = require('./routes/leadsRoutes');
 const estoqueRoutes = require('./routes/estoqueRoutes');
 const multer = require('multer');
+const { Pool } = require('pg');
 
 
 
@@ -48,18 +49,25 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 app.use(session({
-  secret: 'testeVenomSecret',
+  store: new pgSession({
+    pool: pgPool,
+    tableName: 'session' // igual ao nome da tabela criada
+  }),
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
-  secure: process.env.NODE_ENV === 'production', // só true em produção com HTTPS
-  httpOnly: true,
-  sameSite: 'strict',
-  maxAge: 1000 * 60 * 60 * 12
-} // para testes locais HTTP
+    maxAge: 12 * 60 * 60 * 1000, // 12 horas
+    secure: true,
+    httpOnly: true,
+    sameSite: 'strict'
+  }
 }));
 
 const loginLimiter = rateLimit({
