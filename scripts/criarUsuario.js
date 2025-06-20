@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 const pool = require('../db');
 
 async function criarUsuario() {
-  const usuario = 'harlan';
-  const senhaPlana = 'eliane123';
+  const usuario = 'caio';
+  const senhaPlana = 'pessoal';
   const senhaHash = await bcrypt.hash(senhaPlana, 10);
 
   try {

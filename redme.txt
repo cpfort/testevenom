@@ -24,7 +24,7 @@ git push origin main
 .
 
 
-apartir 2 ok
+apartir -1 ok
 
 git reset --soft HEAD~
 
