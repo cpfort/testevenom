@@ -2,13 +2,14 @@ const { Client } = require('pg');
 
 // 🔒 Substitua com seus dados do Railway (HOST, USER, DB, PASSWORD, PORT)
 const client = new Client({
-  host: 'SEU_HOST',
-  user: 'SEU_USUARIO',
-  database: 'SEU_BANCO',
-  password: 'SUA_SENHA',
-  port: 5432,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: parseInt(process.env.DB_PORT, 10),
   ssl: { rejectUnauthorized: false }
 });
+
 
 const criarTabela = async () => {
   try {
