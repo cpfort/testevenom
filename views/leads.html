@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leads</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    form { margin-bottom: 20px; }
+    input, textarea { display: block; margin: 10px 0; width: 300px; padding: 5px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Cadastro de Leads</h1>
+  <form id="leadForm">
+    <input type="text" name="nome" placeholder="Nome" required />
+    <input type="text" name="telefone" placeholder="Telefone" />
+    <input type="email" name="email" placeholder="E-mail" />
+    <textarea name="interesse" placeholder="Interesse"></textarea>
+    <input type="text" name="produto" placeholder="Produto de Interesse" />
+    <button type="submit">Salvar Lead</button>
+  </form>
+
+  <table id="tabelaLeads">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Telefone</th>
+        <th>Email</th>
+        <th>Interesse</th>
+        <th>Produto</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+    <a href="/home" style="
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+">
+  ⬅️ Voltar para o Painel
+</a>
+
+<script src="/js/leads.js"></script>
+
+</body>
+</html>

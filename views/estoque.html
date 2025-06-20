@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Estoque</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    input[type="file"] { margin: 10px 0; }
+    td[contenteditable] { background: #f9f9f9; }
+    button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Gerenciamento de Estoque</h1>
+  <input type="file" id="excelFile" accept=".xlsx" />
+  <button id="btnRelatorio">Baixar Relatório</button>
+
+  <a href="/home" style="
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+">
+  ⬅️ Voltar para o Painel
+</a>
+  <table id="tabelaEstoque">
+    <thead>
+      <tr>
+        <th>Serial</th>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Preço</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+<script src="/js/estoque.js"></script>
+
+</body>
+</html>

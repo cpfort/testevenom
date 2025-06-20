@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ConectSmart - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/styles.css">
+
+  
+
+</head>
+<body>
+
+ 
+<div class="container">
+ 
+  <h1>Mensagem Programada</h1>
+  
+
+
+  <!-- Formulário -->
+<form id="formMensagem">
+  <input type="hidden" name="_csrf" value="%%CSRF_TOKEN%%" id="csrfToken">
+
+  <label for="numero">Número do WhatsApp:</label>
+  <input type="text" id="numero" name="numero" required>
+
+  <label for="cliente">Nome do Cliente:</label>
+  <input type="text" id="cliente" name="cliente" required>
+
+  <label for="mensagem">Mensagem:</label>
+  <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
+
+  <label for="dataEnvio">Data de Envio:</label>
+  <input type="datetime-local" id="dataEnvio" name="dataEnvio" required>
+
+  <label for="ciclo">Ciclo de Envio:</label>
+  <select id="ciclo" name="ciclo">
+    <option value="nenhum">Nenhum</option>
+    <option value="semanal">Semanal</option>
+    <option value="mensal">Mensal</option>
+    <option value="trimestral">Trimestral</option>
+  </select>
+
+  <button type="submit">Agendar Mensagem</button>
+</form>
+
+
+<form action="/logout" method="GET">
+  <button type="submit" class="logout-button">Sair</button>
+  </form>
+
+  <a href="/home" style="
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+">
+  ⬅️ Voltar para o Painel
+</a>
+
+
+
+<label for="filtro">🔍 Filtrar:</label>
+<select id="filtro">
+  <option value="todos">Todos</option>
+  <option value="pendentes">Pendentes (não enviados)</option>
+  <option value="enviados">Enviados</option>
+  
+</select>
+
+
+  <!-- Lista de Agendamentos -->
+  <div class="agendamentos">
+    <h2>Agendamentos Futuros</h2>
+    <div id="listaAgendamentos">Carregando agendamentos...</div>
+  </div>
+</div>
+
+<button id="relatorioTodos">📥 Relatório Geral</button>
+<button id="relatorioPendentes">📥 Relatório Pendentes</button>
+<button id="relatorioEnviados">📥 Relatório Enviados</button>
+<button id="relatorioOcultos">📥 Relatório Ocultos</button>
+
+
+
+
+
+<!-- Modal de Edição -->
+<div id="modalEditar" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>✍️ Editar Mensagem</h2>
+    <textarea id="novaMensagem" rows="4"></textarea>
+    <br>
+    <button id="salvarEdicao">💾 Salvar</button>
+  </div>
+</div>
+
+<div id="agendamentosContainer"></div>
+<h3>Disparo em Massa</h3>
+<iframe src="/iframe-disparo" width="100%" height="300" frameborder="0" style="border:1px solid #ccc; border-radius: 8px;"></iframe>
+
+<!-- <script src="https://unpkg.com/inputmask/dist/inputmask.min.js"></script> -->
+<script src="/js/inputmask.min.js"></script>
+<script src="/js/dashboard.js"></script>
+
+</body>
+</html>
