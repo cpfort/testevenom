@@ -1,4 +1,8 @@
 
+let venomPronto = false;  // declarar primeiro, fora de funções e blocos
+
+// depois, pode usar venomPronto em qualquer lugar
+
 require('dotenv').config();
 
 
@@ -591,7 +595,7 @@ app.post('/api/disparo-massivo', autenticar, async (req, res) => {
   }
 });
 
-let venomPronto = false;
+
 
 iniciarVenom()
   .then(() => {
