@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -6,23 +5,27 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-async function criarTabelaSessoes() {
-  const query = `
-    CREATE TABLE IF NOT EXISTS session (
-      sid VARCHAR NOT NULL PRIMARY KEY,
-      sess JSON NOT NULL,
-      expire TIMESTAMP NOT NULL
+async function criarTabelaSession() {
+  const criarTabelaSQL = `
+    CREATE TABLE IF NOT EXISTS "session" (
+      "sid" varchar NOT NULL,
+      "sess" json NOT NULL,
+      "expire" timestamp(6) NOT NULL
     );
+
+    ALTER TABLE "session" ADD CONSTRAINT IF NOT EXISTS "session_pkey" PRIMARY KEY ("sid");
+
+    CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
   `;
 
   try {
-    await pool.query(query);
-    console.log('✅ Tabela "session" criada com sucesso!');
-  } catch (error) {
-    console.error('❌ Erro ao criar tabela de sessão:', error);
+    await pool.query(criarTabelaSQL);
+    console.log('✅ Tabela "session" criada com sucesso (ou já existia).');
+  } catch (err) {
+    console.error('❌ Erro ao criar tabela "session":', err);
   } finally {
     await pool.end();
   }
 }
 
-criarTabelaSessoes();
+criarTabelaSession();
