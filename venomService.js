@@ -1,36 +1,30 @@
 const venom = require('venom-bot');
 
-let clientVenom = null;
-
-async function iniciarVenom() {
-  try {
-    const client = await venom.create({
-      session: 'connectcomerce',
-      multidevice: true
-    });
-
-    clientVenom = client;
-    console.log('✅ Venom conectado!');
-  } catch (err) {
-    console.error('❌ Erro ao iniciar o Venom:', err);
-    throw err;
-  }
-}
-
-async function enviarViaVenom(numero, mensagem) {
-  if (!clientVenom) {
-    return { sucesso: false, erro: 'Venom não está conectado' };
-  }
-
-  try {
-    await clientVenom.sendText(numero, mensagem);
-    return { sucesso: true };
-  } catch (erro) {
-    return { sucesso: false, erro };
-  }
+function iniciarVenom() {
+  return venom.create(
+    'session-name',
+    undefined,
+    (statusSession, session) => {
+      console.log('Status da sessão:', statusSession);
+    },
+    {
+      headless: true,
+      browserArgs: ['--no-sandbox', '--disable-setuid-sandbox', '--headless=new'],
+      executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe' // ou o path real do seu Chrome
+    }
+  ).then((client) => {
+    global.clientVenom = client;
+    console.log('✅ Venom iniciado com sucesso');
+  }).catch((erro) => {
+    console.error('❌ Erro ao iniciar o Venom:', erro);
+  });
 }
 
 module.exports = {
   iniciarVenom,
-  enviarViaVenom
+  enviarViaVenom: async (numero, mensagem) => {
+    if (!global.clientVenom) throw new Error('Venom não está inicializado');
+    await global.clientVenom.sendText(numero, mensagem);
+    return { sucesso: true };
+  }
 };

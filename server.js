@@ -616,6 +616,11 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
 
+if (process.env.ENVIOS_AUTOMATICOS === 'true') {
+  setInterval(async () => {
+    // envio automático...
+  }, 60 * 1000);
+}
 
 //======================setinterval===================
 setInterval(async () => {
