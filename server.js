@@ -456,11 +456,17 @@ app.put('/api/agendamentos/ocultar/:id', autenticar, async (req, res) => {
   }
 });
 
+function verificarVenomPronto(req, res, next) {
+  if (!venomPronto) {
+    return res.status(503).json({ success: false, error: 'Venom não está pronto. Tente novamente em instantes.' });
+  }
+  next();
+}
 
 
 
 //=== venam post
-app.post('/api/enviar-venom', autenticar, async (req, res) => {
+app.post('/api/enviar-venom', autenticar, verificarVenomPronto, async (req, res) => {
   const { numero, mensagem } = req.body;
   try {
     const resultado = await enviarViaVenom(numero, mensagem);
@@ -473,6 +479,7 @@ app.post('/api/enviar-venom', autenticar, async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 
@@ -543,9 +550,7 @@ app.get('/iframe-disparo', autenticar, (req, res) => {
   });
 });
 //====
-if (!venomPronto) {
-  return res.status(503).json({ success: false, error: 'Venom não está pronto. Tente novamente em instantes.' });
-}
+
 //====
 
 app.post('/api/disparo-massivo', autenticar, async (req, res) => {
@@ -657,7 +662,4 @@ app.listen(PORT, () => {
 });
 
 
-// ✅ Start do servidor HTTP
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-});
+
