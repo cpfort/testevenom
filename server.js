@@ -48,7 +48,22 @@ pool.query('SELECT NOW()', (err, result) => {
 // ========== SEGURANÇA ==========
 app.set('trust proxy', 1);
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", 'https://www.gstatic.com'],
+        scriptSrc: ["'self'", 'https://www.gstatic.com'],
+        imgSrc: ["'self'", 'data:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      }
+    }
+  })
+);
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

@@ -26,7 +26,8 @@ apartir -1 ok
 
 
 git add caminho/para/seu/arquivo.html
-git add testebotvenom/server.js
+git add server.js
+git commit -m "tireiapool2"
 
 git reset --soft HEAD~
 
