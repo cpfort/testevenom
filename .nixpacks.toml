@@ -1,9 +1,31 @@
+# Usa Node.js 20
 [phases.setup]
 nixPkgs = ["nodejs-20_x"]
+aptPkgs = [
+  "libnss3", 
+  "libatk1.0-0", 
+  "libatk-bridge2.0-0", 
+  "libcups2", 
+  "libgbm1", 
+  "libasound2", 
+  "libpangocairo-1.0-0", 
+  "libxss1", 
+  "libgtk-3-0", 
+  "libxshmfence1", 
+  "libglu1", 
+  "chromium"
+]
 
+# Instala apenas dependências de produção após o setup
 [phases.install]
 dependsOn = ["setup"]
-cmds = ["npm ci"]
+cmds = ["npm install --omit=dev"]
 
-[phases.build]
-cmds = ["npm run build"]
+# (build opcional, só se tiver coisas como transpilar TypeScript, etc)
+# você pode remover se não usar
+#[phases.build]
+#cmds = []
+
+# Inicia o servidor
+[start]
+cmd = "node server.js"
