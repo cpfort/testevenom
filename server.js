@@ -591,13 +591,15 @@ app.post('/api/disparo-massivo', autenticar, async (req, res) => {
   }
 });
 
-//==
+let venomPronto = false;
+
 iniciarVenom()
   .then(() => {
+    venomPronto = true; // Marca que o Venom está pronto
     console.log('✅ Venom Bot pronto para envio local!');
 
     setInterval(async () => {
-      if (!global.clientVenom) {
+      if (!venomPronto) {
         console.log('[TIMER] ⏳ Venom ainda não está pronto. Ignorando este ciclo.');
         return;
       }
@@ -639,12 +641,16 @@ iniciarVenom()
       } catch (err) {
         console.error('❌ Erro no envio automático:', err);
       }
-
     }, 60 * 1000); // Executa a cada 60 segundos
   })
   .catch((err) => {
     console.error('❌ Falha ao iniciar o Venom:', err);
   });
+
+// Start do servidor HTTP
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+});
 
 
 // ✅ Start do servidor HTTP
