@@ -26,7 +26,7 @@ const { Pool } = require('pg');
 
 
 
-
+const pool = new Pool();
 
 
 
@@ -55,10 +55,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const pgPool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+
 
 app.use(session({
   store: new pgSession({
