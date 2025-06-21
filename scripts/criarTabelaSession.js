@@ -1,6 +1,7 @@
+require('dotenv').config(); // garantir que o .env será lido
 const { Pool } = require('pg');
 
-const pgPool = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
@@ -17,13 +18,14 @@ async function criarTabelaSession() {
   `;
 
   try {
-    await pgPool.query(query);
+    await pool.query(query);
     console.log('✅ Tabela "session" criada com sucesso!');
   } catch (error) {
     console.error('❌ Erro ao criar tabela "session":', error);
   } finally {
-    await pgPool.end();
+    await pool.end();
   }
 }
 
 criarTabelaSession();
+    

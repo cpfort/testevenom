@@ -21,10 +21,12 @@ git add .
 git commit -m "1"
 git push origin main
 
-.
-
 
 apartir -1 ok
+
+
+git add caminho/para/seu/arquivo.html
+git add testebotvenom/server.js
 
 git reset --soft HEAD~
 
