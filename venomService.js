@@ -10,7 +10,7 @@ function iniciarVenom() {
     {
       headless: true,
       browserArgs: ['--no-sandbox', '--disable-setuid-sandbox', '--headless=new'],
-      executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe' // ou o path real do seu Chrome
+      
     }
   ).then((client) => {
     global.clientVenom = client;

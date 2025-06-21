@@ -616,45 +616,100 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
 
-if (process.env.ENVIOS_AUTOMATICOS === 'true') {
-  setInterval(async () => {
-    // envio automático...
-  }, 60 * 1000);
-}
+iniciarVenom()
+  .then(() => {
+    console.log('✅ Venom Bot iniciado com sucesso!');
+
+    setInterval(async () => {
+      const agora = new Date();
+      console.log(`[TIMER] Verificando mensagens até ${agora.toISOString()}`);
+
+      try {
+        const { rows } = await pool.query(`
+          SELECT * FROM agendamentos 
+          WHERE enviado = false
+          AND data_envio_texto <= $1
+          ORDER BY data_envio_texto ASC
+          LIMIT 10
+        `, [agora.toISOString()]);
+
+        if (rows.length === 0) {
+          console.log('[TIMER] Nenhuma mensagem para enviar.');
+          return;
+        }
+
+        for (const ag of rows) {
+          console.log(`📤 Enviando para ${ag.numero}: ${ag.mensagem}`);
+
+          try {
+            await enviarViaVenom(ag.numero, ag.mensagem);
+
+            await pool.query(
+              'UPDATE agendamentos SET enviado = true WHERE id = $1',
+              [ag.id]
+            );
+
+            console.log(`✅ Mensagem enviada e marcada como enviada (ID ${ag.id})`);
+          } catch (erro) {
+            console.error(`❌ Erro ao enviar para ${ag.numero}:`, erro.message);
+          }
+        }
+
+      } catch (err) {
+        console.error('❌ Erro no envio automático:', err);
+      }
+    }, 60 * 1000); // a cada 1 minuto
+  })
+  .catch(err => console.error('❌ Erro ao iniciar Venom Bot:', err));
+
 
 //======================setinterval===================
-setInterval(async () => {
-  const agora = new Date();
-  console.log(`[TIMER] Verificando mensagens até ${agora.toISOString()}`);
+iniciarVenom()
+  .then(() => {
+    console.log('✅ Venom Bot iniciado com sucesso!');
 
-  try {
-    const { rows } = await pool.query(`
-      SELECT * FROM agendamentos 
-      WHERE enviado = false
-      AND data_envio_texto <= $1
-      ORDER BY data_envio_texto ASC
-      LIMIT 10
-    `, [agora.toISOString()]);
+    setInterval(async () => {
+      const agora = new Date();
+      console.log(`[TIMER] Verificando mensagens até ${agora.toISOString()}`);
 
-    if (rows.length === 0) {
-      console.log('[TIMER] Nenhuma mensagem para enviar.');
-      return;
-    }
+      try {
+        const { rows } = await pool.query(`
+          SELECT * FROM agendamentos 
+          WHERE enviado = false
+          AND data_envio_texto <= $1
+          ORDER BY data_envio_texto ASC
+          LIMIT 10
+        `, [agora.toISOString()]);
 
-    for (const ag of rows) {
-      console.log(`📤 Enviando para ${ag.numero}: ${ag.mensagem}`);
+        if (rows.length === 0) {
+          console.log('[TIMER] Nenhuma mensagem para enviar.');
+          return;
+        }
 
-      // TODO: Chamar função de envio Gupshup aqui
+        for (const ag of rows) {
+          console.log(`📤 Enviando para ${ag.numero}: ${ag.mensagem}`);
 
-      await pool.query(
-        'UPDATE agendamentos SET enviado = true WHERE id = $1',
-        [ag.id]
-      );
+          try {
+            await enviarViaVenom(ag.numero, ag.mensagem);
 
-      console.log(`✅ Marcado como enviado (ID ${ag.id})`);
-    }
+            await pool.query(
+              'UPDATE agendamentos SET enviado = true WHERE id = $1',
+              [ag.id]
+            );
 
-  } catch (err) {
-    console.error('❌ Erro no envio automático:', err);
-  }
-}, 60 * 1000);
+            console.log(`✅ Mensagem enviada e marcada como enviada (ID ${ag.id})`);
+          } catch (erro) {
+            console.error(`❌ Erro ao enviar para ${ag.numero}:`, erro.message);
+          }
+        }
+
+      } catch (err) {
+        console.error('❌ Erro no envio automático:', err);
+      }
+    }, 60 * 1000); // <-- fecha setInterval aqui
+
+  })
+  .catch(err => {
+    console.error('❌ Erro ao iniciar Venom Bot:', err);
+  }); // <-- fecha .catch aqui
+
