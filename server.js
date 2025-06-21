@@ -22,11 +22,10 @@ const ExcelJS = require('exceljs');
 const leadsRoutes = require('./routes/leadsRoutes');
 const estoqueRoutes = require('./routes/estoqueRoutes');
 const multer = require('multer');
-const { Pool } = require('pg');
 
 
 
-const pool = new Pool();
+
 
 
 
@@ -59,7 +58,7 @@ app.use(express.json());
 
 app.use(session({
   store: new pgSession({
-    pool: pgPool,
+    pool: pool,
     tableName: 'session' // igual ao nome da tabela criada
   }),
   secret: process.env.SESSION_SECRET,
