@@ -25,6 +25,8 @@ const ExcelJS = require('exceljs');
 const leadsRoutes = require('./routes/leadsRoutes');
 const estoqueRoutes = require('./routes/estoqueRoutes');
 const multer = require('multer');
+const { iniciarVenom, enviarViaVenom } = require('./venomService');
+
 
 
 
