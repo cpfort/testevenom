@@ -1,4 +1,8 @@
 require('dotenv').config();
+if (!process.env.SESSION_SECRET) {
+  console.error('❌ Variáveis de ambiente não carregadas. Verifique seu .env');
+  process.exit(1);
+}
 const express = require('express');
 const session = require('express-session');
 const { iniciarVenom, enviarViaVenom } = require('./venomService');
@@ -44,18 +48,20 @@ pool.query('SELECT NOW()', (err, result) => {
 
 // ========== SEGURANÇA ==========
 app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://translate.googleapis.com", "https://translate.google.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://www.gstatic.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:"],
+      imgSrc: ["'self'", "data:", "https://www.gstatic.com"],
       connectSrc: ["'self'"],
     },
   },
 }));
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
