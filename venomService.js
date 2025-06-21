@@ -5,18 +5,20 @@ function iniciarVenom() {
     'session-name',
     undefined,
     (statusSession, session) => {
-      console.log('Status da sessão:', statusSession);
+      console.log('📶 Status da sessão:', statusSession);
     },
     {
       headless: true,
       browserArgs: ['--no-sandbox', '--disable-setuid-sandbox', '--headless=new'],
-      
+      executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe', // 👈 caminho para o Chrome
     }
   ).then((client) => {
     global.clientVenom = client;
     console.log('✅ Venom iniciado com sucesso');
+    return client;
   }).catch((erro) => {
     console.error('❌ Erro ao iniciar o Venom:', erro);
+    throw erro;
   });
 }
 

@@ -1,11 +1,10 @@
+
 require('dotenv').config();
-if (!process.env.SESSION_SECRET) {
-  console.error('❌ Variáveis de ambiente não carregadas. Verifique seu .env');
-  process.exit(1);
-}
+
+
 const express = require('express');
 const session = require('express-session');
-const { iniciarVenom, enviarViaVenom } = require('./venomService');
+
 const helmet = require('helmet');
 const csurf = require('csurf');
 const crypto = require('crypto');
@@ -48,22 +47,7 @@ pool.query('SELECT NOW()', (err, result) => {
 // ========== SEGURANÇA ==========
 app.set('trust proxy', 1);
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", 'https://www.gstatic.com'],
-        scriptSrc: ["'self'", 'https://www.gstatic.com'],
-        imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        upgradeInsecureRequests: [],
-      }
-    }
-  })
-);
+app.use(helmet());
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -554,7 +538,11 @@ app.get('/iframe-disparo', autenticar, (req, res) => {
     res.send(htmlComToken);
   });
 });
-
+//====
+if (!venomPronto) {
+  return res.status(503).json({ success: false, error: 'Venom não está pronto. Tente novamente em instantes.' });
+}
+//====
 
 app.post('/api/disparo-massivo', autenticar, async (req, res) => {
   const { mensagem } = req.body;
@@ -606,9 +594,14 @@ app.post('/api/disparo-massivo', autenticar, async (req, res) => {
 //==
 iniciarVenom()
   .then(() => {
-    console.log('✅ Venom Bot iniciado com sucesso!');
+    console.log('✅ Venom Bot pronto para envio local!');
 
     setInterval(async () => {
+      if (!global.clientVenom) {
+        console.log('[TIMER] ⏳ Venom ainda não está pronto. Ignorando este ciclo.');
+        return;
+      }
+
       const agora = new Date();
       console.log(`[TIMER] Verificando mensagens até ${agora.toISOString()}`);
 
@@ -646,14 +639,15 @@ iniciarVenom()
       } catch (err) {
         console.error('❌ Erro no envio automático:', err);
       }
-    }, 60 * 1000); // a cada 1 minuto
 
+    }, 60 * 1000); // Executa a cada 60 segundos
   })
-  .catch(err => {
-    console.error('❌ Erro ao iniciar Venom Bot:', err);
+  .catch((err) => {
+    console.error('❌ Falha ao iniciar o Venom:', err);
   });
 
-// Start do servidor normalmente
+
+// ✅ Start do servidor HTTP
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
