@@ -1,30 +1,28 @@
 const { Pool } = require('pg');
 
-const pool = new Pool({
+const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
 async function criarTabelaSession() {
-  const criarTabelaSQL = `
+  const query = `
     CREATE TABLE IF NOT EXISTS "session" (
-      "sid" varchar NOT NULL,
+      "sid" varchar NOT NULL COLLATE "default",
       "sess" json NOT NULL,
       "expire" timestamp(6) NOT NULL
     );
-
-    ALTER TABLE "session" ADD CONSTRAINT IF NOT EXISTS "session_pkey" PRIMARY KEY ("sid");
-
+    ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid");
     CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
   `;
 
   try {
-    await pool.query(criarTabelaSQL);
-    console.log('✅ Tabela "session" criada com sucesso (ou já existia).');
-  } catch (err) {
-    console.error('❌ Erro ao criar tabela "session":', err);
+    await pgPool.query(query);
+    console.log('✅ Tabela "session" criada com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao criar tabela "session":', error);
   } finally {
-    await pool.end();
+    await pgPool.end();
   }
 }
 
